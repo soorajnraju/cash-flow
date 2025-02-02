@@ -106,7 +106,7 @@ function App() {
 
   return (
     <div className="App container">
-      <h1 className="text-center my-4">Budget Planner</h1>
+      <h1 className="text-center my-4">Cash flow</h1>
       <div className="row mb-3">
         <div className="col-md-6">
           <label className="form-label">Fixed Income: </label>
