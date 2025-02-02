@@ -1,0 +1,73 @@
+#root {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.App {
+  font-family: var(--font-family);
+  padding: 20px;
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.App h1 {
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.App div {
+  margin-bottom: 10px;
+}
+
+.App label {
+  margin-right: 10px;
+}
+
+.App table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.App th,
+.App td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.App th {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.App input,
+.App textarea {
+  padding: 5px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.App button {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.App button:hover {
+  background-color: var(--dark-color);
+}
+
+.App input[type="file"] {
+  margin-top: 10px;
+}
+
+canvas {
+  margin-top: 20px;
+}
