@@ -51,19 +51,6 @@
   border-radius: 4px;
 }
 
-.App button {
-  padding: 10px 20px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.25s;
-}
-
-.App button:hover {
-  background-color: var(--dark-color);
-}
-
 .App input[type="file"] {
   margin-top: 10px;
 }
