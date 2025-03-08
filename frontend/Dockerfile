@@ -2,7 +2,7 @@
 FROM node:20
 
 # Set the working directory
-WORKDIR  /home/sooraj/docker-example/frontend
+WORKDIR /app
 
 # Copy package.json and install dependencies
 COPY package.json ./
