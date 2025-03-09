@@ -174,7 +174,7 @@ function App() {
       <div className="rotate-message">
         Please rotate your device to landscape mode.
       </div>
-      <h1 className="text-center my-4">Cash flow</h1>
+      <h1 className="text-center my-4">Cash Flow</h1>
       <div className="row mb-3">
         <div className="col-md-6 col-sm-12">
           <label className="form-label">Fixed Income: </label>
@@ -269,12 +269,28 @@ function App() {
       </div>
       <div className="my-4">
         <h3>Insights</h3>
-        <p>Average Monthly Income: {insights.avgIncome.toFixed(2)}</p>
-        <p>Average Monthly Expenses: {insights.avgExpenses.toFixed(2)}</p>
-        <p>
-          Net {insights.netSavings > 0 ? "Savings" : "Debts"}:{" "}
-          {insights.netSavings.toFixed(2)}
-        </p>
+        <div className="card-deck">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">Average Monthly Income</h5>
+              <p className="card-text">{insights.avgIncome.toFixed(2)}</p>
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">Average Monthly Expenses</h5>
+              <p className="card-text">{insights.avgExpenses.toFixed(2)}</p>
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">
+                Net {insights.netSavings > 0 ? "Savings" : "Debts"}
+              </h5>
+              <p className="card-text">{insights.netSavings.toFixed(2)}</p>
+            </div>
+          </div>
+        </div>
       </div>
       <footer className="text-center my-4">
         Built using GitHub Copilot and ChatGPT
