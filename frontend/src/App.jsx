@@ -177,8 +177,11 @@ function App() {
   };
 
   const getInsights = () => {
-    const avgIncome = (fixedIncome + totalVariableIncome) / 12;
-    const avgExpenses = (fixedExpenses + totalVariableExpenses) / 12;
+    const numMonths = months.length;
+    const avgIncome =
+      (fixedIncome * numMonths + totalVariableIncome) / numMonths;
+    const avgExpenses =
+      (fixedExpenses * numMonths + totalVariableExpenses) / numMonths;
     const netSavings = savingsOrDebts;
 
     return {
@@ -208,7 +211,7 @@ function App() {
       </div>
       <div className="row mb-3">
         <div className="col-md-6 col-sm-12">
-          <label className="form-label">Fixed Income: </label>
+          <label className="form-label">Fixed Monthly Income: </label>
           <input
             type="text"
             className="form-control"
@@ -217,7 +220,7 @@ function App() {
           />
         </div>
         <div className="col-md-6 col-sm-12">
-          <label className="form-label">Fixed Expenses: </label>
+          <label className="form-label">Fixed Monthly Expenses: </label>
           <input
             type="text"
             className="form-control"
