@@ -30,9 +30,9 @@ Check it out here: 👉 [Cash Flow Analyzer](https://soorajnraju.github.io/cash-
 
 ## 💡 Powered by AI
 
-This entire project was **crafted purely by AI-driven tools**! 🤖✨  
-**No human wrote a single line of code**—only guided by human creativity and vision.  
-Special thanks to **ChatGPT** and **GitHub Copilot** for bringing this idea to life! 💙
+This entire project was **brought to life entirely by AI-driven tools**! 🤖✨  
+**No humans were harmed in the making of this code**, only guided by human creativity and caffeine-fueled inspiration.  
+Special thanks to **ChatGPT** and **GitHub Copilot** for making this idea a reality! 💙
 
 ## 🤝 Contribute
 
