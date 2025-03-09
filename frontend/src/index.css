@@ -115,3 +115,75 @@ canvas {
     background-color: #f9f9f9;
   }
 }
+
+.dark-theme {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #242424;
+  --dark-color: #f8f9fa;
+  --font-family: "Roboto", sans-serif;
+  font-family: var(--font-family);
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark-theme body {
+  background-color: var(--light-color);
+  color: var(--dark-color);
+}
+
+.dark-theme a {
+  color: var(--primary-color);
+}
+
+.dark-theme a:hover {
+  color: var(--dark-color);
+}
+
+.dark-theme h1 {
+  color: var(--primary-color);
+}
+
+.dark-theme button {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.dark-theme button:hover {
+  background-color: var(--dark-color);
+}
+
+.dark-theme th {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.dark-theme table {
+  background-color: #343a40;
+  color: #f8f9fa;
+}
+
+.dark-theme th,
+.dark-theme td {
+  border: 1px solid #555;
+}
+
+.dark-theme input,
+.dark-theme textarea {
+  background-color: #343a40;
+  color: #f8f9fa;
+  border: 1px solid #555;
+}

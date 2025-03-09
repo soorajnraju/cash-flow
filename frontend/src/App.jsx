@@ -12,6 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { FaSun, FaMoon } from "react-icons/fa";
 import "./App.css";
 
 ChartJS.register(
@@ -62,6 +63,7 @@ function App() {
   const [monthlySavingsOrDebts, setMonthlySavingsOrDebts] = useState([]);
   const [totalVariableIncome, setTotalVariableIncome] = useState(0);
   const [totalVariableExpenses, setTotalVariableExpenses] = useState(0);
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
     let totalSavingsOrDebts = 0;
@@ -84,6 +86,10 @@ function App() {
     localStorage.setItem("fixedExpenses", JSON.stringify(fixedExpenses));
     localStorage.setItem("months", JSON.stringify(months));
   }, [fixedIncome, fixedExpenses, months]);
+
+  useEffect(() => {
+    document.body.className = theme === "dark" ? "dark-theme" : "";
+  }, [theme]);
 
   const handleInputChange = (index, field, value) => {
     const newMonths = [...months];
@@ -125,6 +131,10 @@ function App() {
       setSavingsOrDebts(data.savingsOrDebts);
     };
     reader.readAsText(file);
+  };
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
   const chartData = {
@@ -174,7 +184,12 @@ function App() {
       <div className="rotate-message">
         Please rotate your device to landscape mode.
       </div>
-      <h1 className="text-center my-4">Cash Flow</h1>
+      <div className="d-flex flex-column align-items-center my-4">
+        <h1 className="text-center">Cash Flow</h1>
+        <button className="btn btn-secondary mt-2" onClick={toggleTheme}>
+          {theme === "light" ? <FaMoon /> : <FaSun />}
+        </button>
+      </div>
       <div className="row mb-3">
         <div className="col-md-6 col-sm-12">
           <label className="form-label">Fixed Income: </label>
