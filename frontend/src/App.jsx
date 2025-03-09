@@ -130,10 +130,13 @@ function App() {
   };
 
   return (
-    <div className="App container">
+    <div className="App container-fluid">
+      <div className="rotate-message">
+        Please rotate your device to landscape mode.
+      </div>
       <h1 className="text-center my-4">Cash flow</h1>
       <div className="row mb-3">
-        <div className="col-md-6">
+        <div className="col-md-6 col-sm-12">
           <label className="form-label">Fixed Income: </label>
           <input
             type="text"
@@ -142,7 +145,7 @@ function App() {
             onChange={(e) => handleFixedIncomeChange(e.target.value)}
           />
         </div>
-        <div className="col-md-6">
+        <div className="col-md-6 col-sm-12">
           <label className="form-label">Fixed Expenses: </label>
           <input
             type="text"
@@ -152,7 +155,7 @@ function App() {
           />
         </div>
       </div>
-      <table className="table table-bordered">
+      <table className="table table-bordered table-responsive">
         <thead>
           <tr>
             <th>Month</th>
@@ -221,6 +224,9 @@ function App() {
       <div className="my-4">
         <Line data={chartData} />
       </div>
+      <footer className="text-center my-4">
+        Built using GitHub Copilot and ChatGPT
+      </footer>
     </div>
   );
 }
