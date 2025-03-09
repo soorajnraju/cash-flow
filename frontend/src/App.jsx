@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
@@ -18,6 +19,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -58,17 +60,25 @@ function App() {
   const [months, setMonths] = useState(getStoredData("months", initialMonths));
   const [savingsOrDebts, setSavingsOrDebts] = useState(0);
   const [monthlySavingsOrDebts, setMonthlySavingsOrDebts] = useState([]);
+  const [totalVariableIncome, setTotalVariableIncome] = useState(0);
+  const [totalVariableExpenses, setTotalVariableExpenses] = useState(0);
 
   useEffect(() => {
     let totalSavingsOrDebts = 0;
+    let totalIncome = 0;
+    let totalExpenses = 0;
     const monthlyData = months.map((monthData) => {
-      const totalIncome = fixedIncome + monthData.variableIncome;
-      const totalExpenses = fixedExpenses + monthData.variableExpenses;
-      totalSavingsOrDebts += totalIncome - totalExpenses;
+      const totalMonthIncome = fixedIncome + monthData.variableIncome;
+      const totalMonthExpenses = fixedExpenses + monthData.variableExpenses;
+      totalSavingsOrDebts += totalMonthIncome - totalMonthExpenses;
+      totalIncome += monthData.variableIncome;
+      totalExpenses += monthData.variableExpenses;
       return totalSavingsOrDebts;
     });
     setSavingsOrDebts(totalSavingsOrDebts);
     setMonthlySavingsOrDebts(monthlyData);
+    setTotalVariableIncome(totalIncome);
+    setTotalVariableExpenses(totalExpenses);
 
     localStorage.setItem("fixedIncome", JSON.stringify(fixedIncome));
     localStorage.setItem("fixedExpenses", JSON.stringify(fixedExpenses));
@@ -128,6 +138,36 @@ function App() {
       },
     ],
   };
+
+  const barChartData = {
+    labels: months.map((month) => month.month),
+    datasets: [
+      {
+        label: "Variable Income",
+        data: months.map((month) => month.variableIncome),
+        backgroundColor: "green",
+      },
+      {
+        label: "Variable Expenses",
+        data: months.map((month) => month.variableExpenses),
+        backgroundColor: "red",
+      },
+    ],
+  };
+
+  const getInsights = () => {
+    const avgIncome = (fixedIncome + totalVariableIncome) / 12;
+    const avgExpenses = (fixedExpenses + totalVariableExpenses) / 12;
+    const netSavings = savingsOrDebts;
+
+    return {
+      avgIncome,
+      avgExpenses,
+      netSavings,
+    };
+  };
+
+  const insights = getInsights();
 
   return (
     <div className="App container-fluid">
@@ -223,6 +263,18 @@ function App() {
       />
       <div className="my-4">
         <Line data={chartData} />
+      </div>
+      <div className="my-4">
+        <Bar data={barChartData} />
+      </div>
+      <div className="my-4">
+        <h3>Insights</h3>
+        <p>Average Monthly Income: {insights.avgIncome.toFixed(2)}</p>
+        <p>Average Monthly Expenses: {insights.avgExpenses.toFixed(2)}</p>
+        <p>
+          Net {insights.netSavings > 0 ? "Savings" : "Debts"}:{" "}
+          {insights.netSavings.toFixed(2)}
+        </p>
       </div>
       <footer className="text-center my-4">
         Built using GitHub Copilot and ChatGPT
