@@ -158,7 +158,6 @@ canvas {
 }
 
 .dark-theme button {
-  background-color: var(--primary-color);
   color: white;
 }
 
@@ -186,4 +185,14 @@ canvas {
   background-color: #343a40;
   color: #f8f9fa;
   border: 1px solid #555;
+}
+
+.dark-theme .btn-danger:hover {
+  background-color: #ff4d4d;
+  border-color: #ff4d4d;
+}
+
+.dark-theme .btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
 }

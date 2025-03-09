@@ -12,7 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FaSun, FaMoon } from "react-icons/fa";
+import { FaSun, FaMoon, FaTrashAlt } from "react-icons/fa";
 import "./App.css";
 
 ChartJS.register(
@@ -137,6 +137,17 @@ function App() {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
+  const resetLocalStorage = () => {
+    localStorage.clear();
+    setFixedIncome(0);
+    setFixedExpenses(0);
+    setMonths(initialMonths);
+    setSavingsOrDebts(0);
+    setMonthlySavingsOrDebts([]);
+    setTotalVariableIncome(0);
+    setTotalVariableExpenses(0);
+  };
+
   const chartData = {
     labels: months.map((month) => month.month),
     datasets: [
@@ -185,10 +196,15 @@ function App() {
         Please rotate your device to landscape mode.
       </div>
       <div className="d-flex flex-column align-items-center my-4">
-        <h1 className="text-center">Cash Flow</h1>
-        <button className="btn btn-secondary mt-2" onClick={toggleTheme}>
-          {theme === "light" ? <FaMoon /> : <FaSun />}
-        </button>
+        <div className="d-flex justify-content-between w-100">
+          <button className="btn btn-danger" onClick={resetLocalStorage}>
+            <FaTrashAlt /> Reset Data
+          </button>
+          <button className="btn btn-secondary" onClick={toggleTheme}>
+            {theme === "light" ? <FaMoon /> : <FaSun />}
+          </button>
+        </div>
+        <h1 className="text-center mt-3">Cash Flow</h1>
       </div>
       <div className="row mb-3">
         <div className="col-md-6 col-sm-12">
