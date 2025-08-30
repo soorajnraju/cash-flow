@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Line, Bar } from "react-chartjs-2";
+import { Line, Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,10 +10,20 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FaSun, FaMoon, FaTrashAlt } from "react-icons/fa";
+import { FaSun, FaMoon, FaTrashAlt, FaChartLine, FaTable, FaCog, FaHome, FaCalendarAlt, FaBrain } from "react-icons/fa";
 import "./App.css";
+
+// Import new components
+import Dashboard from "./components/Dashboard";
+import CategoryManager from "./components/CategoryManager";
+import TransactionManager from "./components/TransactionManager";
+import AdvancedCharts from "./components/AdvancedCharts";
+import DataManager from "./components/DataManager";
+import RecurringTransactionManager from "./components/RecurringTransactionManager";
+import AIAnalysisComponent from "./components/AIAnalysisComponent";
 
 ChartJS.register(
   CategoryScale,
@@ -21,25 +31,17 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend
 );
 
 function App() {
+  // Initial state structure
   const initialMonths = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
   ].map((month) => ({
     month,
     variableIncome: 0,
@@ -52,282 +54,297 @@ function App() {
     return stored ? JSON.parse(stored) : defaultValue;
   };
 
-  const [fixedIncome, setFixedIncome] = useState(
-    getStoredData("fixedIncome", 0)
-  );
-  const [fixedExpenses, setFixedExpenses] = useState(
-    getStoredData("fixedExpenses", 0)
-  );
+  // Enhanced state management
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [theme, setTheme] = useState(getStoredData("theme", "light"));
+  
+  // Financial data state
+  const [fixedIncome, setFixedIncome] = useState(getStoredData("fixedIncome", 0));
+  const [fixedExpenses, setFixedExpenses] = useState(getStoredData("fixedExpenses", 0));
   const [months, setMonths] = useState(getStoredData("months", initialMonths));
-  const [savingsOrDebts, setSavingsOrDebts] = useState(0);
-  const [monthlySavingsOrDebts, setMonthlySavingsOrDebts] = useState([]);
-  const [totalVariableIncome, setTotalVariableIncome] = useState(0);
-  const [totalVariableExpenses, setTotalVariableExpenses] = useState(0);
-  const [theme, setTheme] = useState("light");
+  const [transactions, setTransactions] = useState(getStoredData("transactions", []));
+  const [recurringTransactions, setRecurringTransactions] = useState(getStoredData("recurringTransactions", []));
+  
+  // Category management
+  const [expenseCategories, setExpenseCategories] = useState(
+    getStoredData("expenseCategories", [
+      { name: 'Housing', budgeted: 0, spent: 0 },
+      { name: 'Food & Dining', budgeted: 0, spent: 0 },
+      { name: 'Transportation', budgeted: 0, spent: 0 }
+    ])
+  );
+  
+  const [incomeCategories, setIncomeCategories] = useState(
+    getStoredData("incomeCategories", [
+      { name: 'Salary', budgeted: 0, actual: 0 },
+      { name: 'Freelance', budgeted: 0, actual: 0 }
+    ])
+  );
 
+  // Calculated values
+  const [insights, setInsights] = useState({
+    totalIncome: 0,
+    totalExpenses: 0,
+    netSavings: 0,
+    monthlyAverage: 0
+  });
+
+  // Calculate insights based on transactions and categories
   useEffect(() => {
-    let totalSavingsOrDebts = 0;
-    let totalIncome = 0;
-    let totalExpenses = 0;
-    const monthlyData = months.map((monthData) => {
-      const totalMonthIncome = fixedIncome + monthData.variableIncome;
-      const totalMonthExpenses = fixedExpenses + monthData.variableExpenses;
-      totalSavingsOrDebts += totalMonthIncome - totalMonthExpenses;
-      totalIncome += monthData.variableIncome;
-      totalExpenses += monthData.variableExpenses;
-      return totalSavingsOrDebts;
+    const currentYearTransactions = transactions.filter(t => 
+      new Date(t.date).getFullYear() === currentYear
+    );
+
+    const totalIncome = currentYearTransactions
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    const totalExpenses = currentYearTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const netSavings = totalIncome - totalExpenses;
+    const monthlyAverage = netSavings / 12;
+
+    setInsights({
+      totalIncome,
+      totalExpenses,
+      netSavings,
+      monthlyAverage
     });
-    setSavingsOrDebts(totalSavingsOrDebts);
-    setMonthlySavingsOrDebts(monthlyData);
-    setTotalVariableIncome(totalIncome);
-    setTotalVariableExpenses(totalExpenses);
 
-    localStorage.setItem("fixedIncome", JSON.stringify(fixedIncome));
-    localStorage.setItem("fixedExpenses", JSON.stringify(fixedExpenses));
-    localStorage.setItem("months", JSON.stringify(months));
-  }, [fixedIncome, fixedExpenses, months]);
+    // Update category totals
+    updateCategoryTotals(currentYearTransactions);
+  }, [transactions, currentYear]);
 
+  // Update category spending totals
+  const updateCategoryTotals = (currentYearTransactions) => {
+    // Update expense categories
+    setExpenseCategories(prev => prev.map(category => ({
+      ...category,
+      spent: currentYearTransactions
+        .filter(t => t.type === 'expense' && t.category === category.name)
+        .reduce((sum, t) => sum + t.amount, 0)
+    })));
+
+    // Update income categories
+    setIncomeCategories(prev => prev.map(category => ({
+      ...category,
+      actual: currentYearTransactions
+        .filter(t => t.type === 'income' && t.category === category.name)
+        .reduce((sum, t) => sum + t.amount, 0)
+    })));
+  };
+
+  // Persist data to localStorage
+  useEffect(() => {
+    const dataToStore = {
+      theme,
+      fixedIncome,
+      fixedExpenses,
+      months,
+      transactions,
+      recurringTransactions,
+      expenseCategories,
+      incomeCategories,
+      currentYear
+    };
+
+    Object.entries(dataToStore).forEach(([key, value]) => {
+      localStorage.setItem(key, JSON.stringify(value));
+    });
+  }, [theme, fixedIncome, fixedExpenses, months, transactions, recurringTransactions, expenseCategories, incomeCategories, currentYear]);
+
+  // Theme management
   useEffect(() => {
     document.body.className = theme === "dark" ? "dark-theme" : "";
   }, [theme]);
-
-  const handleInputChange = (index, field, value) => {
-    const newMonths = [...months];
-    newMonths[index][field] =
-      field === "comments" ? value : parseFloat(value) || 0;
-    setMonths(newMonths);
-  };
-
-  const handleFixedIncomeChange = (value) =>
-    setFixedIncome(parseFloat(value) || 0);
-  const handleFixedExpensesChange = (value) =>
-    setFixedExpenses(parseFloat(value) || 0);
-
-  const handleDeleteMonth = (index) => {
-    const newMonths = months.filter((_, i) => i !== index);
-    setMonths(newMonths);
-  };
-
-  const handleDownload = () => {
-    const data = { fixedIncome, fixedExpenses, months, savingsOrDebts };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "cash-flow.json";
-    a.click();
-  };
-
-  const handleUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = JSON.parse(e.target.result);
-      setFixedIncome(data.fixedIncome);
-      setFixedExpenses(data.fixedExpenses);
-      setMonths(data.months);
-      setSavingsOrDebts(data.savingsOrDebts);
-    };
-    reader.readAsText(file);
-  };
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
-  const resetLocalStorage = () => {
+  // Data management functions
+  const handleDataImport = (importData) => {
+    if (importData.fixedIncome !== undefined) setFixedIncome(importData.fixedIncome);
+    if (importData.fixedExpenses !== undefined) setFixedExpenses(importData.fixedExpenses);
+    if (importData.months) setMonths(importData.months);
+    if (importData.transactions) setTransactions(importData.transactions);
+    if (importData.recurringTransactions) setRecurringTransactions(importData.recurringTransactions);
+    if (importData.expenseCategories) setExpenseCategories(importData.expenseCategories);
+    if (importData.incomeCategories) setIncomeCategories(importData.incomeCategories);
+    if (importData.currentYear) setCurrentYear(importData.currentYear);
+  };
+
+  const handleDataReset = () => {
     localStorage.clear();
     setFixedIncome(0);
     setFixedExpenses(0);
     setMonths(initialMonths);
-    setSavingsOrDebts(0);
-    setMonthlySavingsOrDebts([]);
-    setTotalVariableIncome(0);
-    setTotalVariableExpenses(0);
+    setTransactions([]);
+    setRecurringTransactions([]);
+    setExpenseCategories([
+      { name: 'Housing', budgeted: 0, spent: 0 },
+      { name: 'Food & Dining', budgeted: 0, spent: 0 },
+      { name: 'Transportation', budgeted: 0, spent: 0 }
+    ]);
+    setIncomeCategories([
+      { name: 'Salary', budgeted: 0, actual: 0 },
+      { name: 'Freelance', budgeted: 0, actual: 0 }
+    ]);
+    setCurrentView('dashboard');
   };
 
-  const chartData = {
-    labels: months.map((month) => month.month),
-    datasets: [
-      {
-        label: "Total Savings/Debts",
-        data: monthlySavingsOrDebts,
-        fill: false,
-        borderColor: "blue",
-      },
-    ],
+  const handleGenerateRecurringTransactions = (generatedTransactions) => {
+    setTransactions(prev => [...prev, ...generatedTransactions]);
   };
 
-  const barChartData = {
-    labels: months.map((month) => month.month),
-    datasets: [
-      {
-        label: "Variable Income",
-        data: months.map((month) => month.variableIncome),
-        backgroundColor: "green",
-      },
-      {
-        label: "Variable Expenses",
-        data: months.map((month) => month.variableExpenses),
-        backgroundColor: "red",
-      },
-    ],
+  // Navigation
+  const navigationItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: <FaHome /> },
+    { id: 'recurring', label: 'Recurring', icon: <FaCalendarAlt /> },
+    { id: 'transactions', label: 'Transactions', icon: <FaTable /> },
+    { id: 'categories', label: 'Categories', icon: <FaCog /> },
+    { id: 'charts', label: 'Analytics', icon: <FaChartLine /> },
+    { id: 'ai-analysis', label: 'AI Insights', icon: <FaBrain /> },
+    { id: 'data', label: 'Data Management', icon: <FaTrashAlt /> }
+  ];
+
+  const allData = {
+    fixedIncome,
+    fixedExpenses,
+    months,
+    transactions,
+    recurringTransactions,
+    expenseCategories,
+    incomeCategories,
+    currentYear
   };
 
-  const getInsights = () => {
-    const numMonths = months.length;
-    const avgIncome =
-      (fixedIncome * numMonths + totalVariableIncome) / numMonths;
-    const avgExpenses =
-      (fixedExpenses * numMonths + totalVariableExpenses) / numMonths;
-    const netSavings = savingsOrDebts;
-
-    return {
-      avgIncome,
-      avgExpenses,
-      netSavings,
-    };
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'dashboard':
+        return <Dashboard insights={insights} currentYear={currentYear} />;
+      case 'recurring':
+        return (
+          <RecurringTransactionManager
+            recurringTransactions={recurringTransactions}
+            setRecurringTransactions={setRecurringTransactions}
+            expenseCategories={expenseCategories}
+            incomeCategories={incomeCategories}
+            onGenerateTransactions={handleGenerateRecurringTransactions}
+          />
+        );
+      case 'transactions':
+        return (
+          <TransactionManager
+            transactions={transactions}
+            setTransactions={setTransactions}
+            expenseCategories={expenseCategories}
+            incomeCategories={incomeCategories}
+            currentYear={currentYear}
+          />
+        );
+      case 'categories':
+        return (
+          <CategoryManager
+            expenseCategories={expenseCategories}
+            setExpenseCategories={setExpenseCategories}
+            incomeCategories={incomeCategories}
+            setIncomeCategories={setIncomeCategories}
+          />
+        );
+      case 'charts':
+        return (
+          <AdvancedCharts
+            months={months}
+            transactions={transactions}
+            expenseCategories={expenseCategories}
+            incomeCategories={incomeCategories}
+            currentYear={currentYear}
+          />
+        );
+      case 'ai-analysis':
+        return (
+          <AIAnalysisComponent
+            transactions={transactions}
+            expenseCategories={expenseCategories}
+            incomeCategories={incomeCategories}
+            recurringTransactions={recurringTransactions}
+            currentYear={currentYear}
+          />
+        );
+      case 'data':
+        return (
+          <DataManager
+            data={allData}
+            onImport={handleDataImport}
+            onReset={handleDataReset}
+            appVersion="3.0.0"
+          />
+        );
+      default:
+        return <Dashboard insights={insights} currentYear={currentYear} />;
+    }
   };
-
-  const insights = getInsights();
 
   return (
     <div className="App container-fluid">
       <div className="rotate-message">
         Please rotate your device to landscape mode.
       </div>
-      <div className="d-flex flex-column align-items-center my-4">
-        <div className="d-flex justify-content-between w-100">
-          <button className="btn btn-danger" onClick={resetLocalStorage}>
-            <FaTrashAlt /> Reset Data
-          </button>
-          <button className="btn btn-secondary" onClick={toggleTheme}>
+      
+      {/* Header */}
+      <header className="d-flex justify-content-between align-items-center my-3 p-3 bg-light rounded">
+        <div className="text-start">
+          <h1 className="mb-0 text-start">Cash Flow Pro</h1>
+          <small className="text-muted">Advanced Financial Management v3.1 - Now with AI Analysis & Recurring Transactions</small>
+        </div>
+        <div className="d-flex align-items-center gap-3">
+          <div className="d-flex align-items-center">
+            <FaCalendarAlt className="me-2" />
+            <select 
+              className="form-select"
+              value={currentYear}
+              onChange={(e) => setCurrentYear(parseInt(e.target.value))}
+            >
+              {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+          <button className="btn btn-outline-secondary" onClick={toggleTheme}>
             {theme === "light" ? <FaMoon /> : <FaSun />}
           </button>
         </div>
-        <h1 className="text-center mt-3">Cash Flow</h1>
-      </div>
-      <div className="row mb-3">
-        <div className="col-md-6 col-sm-12">
-          <label className="form-label">Fixed Monthly Income: </label>
-          <input
-            type="text"
-            className="form-control"
-            value={fixedIncome}
-            onChange={(e) => handleFixedIncomeChange(e.target.value)}
-          />
-        </div>
-        <div className="col-md-6 col-sm-12">
-          <label className="form-label">Fixed Monthly Expenses: </label>
-          <input
-            type="text"
-            className="form-control"
-            value={fixedExpenses}
-            onChange={(e) => handleFixedExpensesChange(e.target.value)}
-          />
-        </div>
-      </div>
-      <table className="table table-bordered table-responsive">
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th>Variable Income</th>
-            <th>Variable Expenses</th>
-            <th>Comments</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {months.map((monthData, index) => (
-            <tr key={index}>
-              <td>{monthData.month}</td>
-              <td>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={monthData.variableIncome}
-                  onChange={(e) =>
-                    handleInputChange(index, "variableIncome", e.target.value)
-                  }
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={monthData.variableExpenses}
-                  onChange={(e) =>
-                    handleInputChange(index, "variableExpenses", e.target.value)
-                  }
-                />
-              </td>
-              <td>
-                <textarea
-                  className="form-control"
-                  value={monthData.comments}
-                  onChange={(e) =>
-                    handleInputChange(index, "comments", e.target.value)
-                  }
-                />
-              </td>
-              <td>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDeleteMonth(index)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
+      </header>
+
+      {/* Navigation */}
+      <nav className="mb-4">
+        <div className="nav nav-pills nav-fill">
+          {navigationItems.map(item => (
+            <button
+              key={item.id}
+              className={`nav-link ${currentView === item.id ? 'active' : ''}`}
+              onClick={() => setCurrentView(item.id)}
+            >
+              {item.icon} <span className="ms-2">{item.label}</span>
+            </button>
           ))}
-        </tbody>
-      </table>
-      <h2>
-        {savingsOrDebts >= 0 ? "Savings" : "Debts"}: {Math.abs(savingsOrDebts)}
-      </h2>
-      <button className="btn btn-primary me-2" onClick={handleDownload}>
-        Download JSON
-      </button>
-      <input
-        type="file"
-        className="form-control-file"
-        onChange={handleUpload}
-      />
-      <div className="my-4">
-        <Line data={chartData} />
-      </div>
-      <div className="my-4">
-        <Bar data={barChartData} />
-      </div>
-      <div className="my-4">
-        <h3>Insights</h3>
-        <div className="card-deck">
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">Average Monthly Income</h5>
-              <p className="card-text">{insights.avgIncome.toFixed(2)}</p>
-            </div>
-          </div>
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">Average Monthly Expenses</h5>
-              <p className="card-text">{insights.avgExpenses.toFixed(2)}</p>
-            </div>
-          </div>
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">
-                Net {insights.netSavings > 0 ? "Savings" : "Debts"}
-              </h5>
-              <p className="card-text">{insights.netSavings.toFixed(2)}</p>
-            </div>
-          </div>
         </div>
-      </div>
-      <footer className="text-center my-4">
-        Built using GitHub Copilot and ChatGPT
+      </nav>
+
+      {/* Main Content */}
+      <main>
+        {renderCurrentView()}
+      </main>
+
+      {/* Footer */}
+      <footer className="text-center my-4 py-3 border-top">
+        <small className="text-muted">
+          Built with React, Chart.js & Bootstrap | Enhanced with AI-powered features | v3.1.0
+        </small>
       </footer>
     </div>
   );
