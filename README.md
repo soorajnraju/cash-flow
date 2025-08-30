@@ -1,8 +1,8 @@
-# 🚀 Cash Flow Pro - Advanced Financial Management
+# 🚀 Cash Flow (Beta) - Advanced Financial Management
 
-Welcome to **Cash Flow Pro**! 🎉 This comprehensive financial management tool helps you track income, expenses, manage budgets, and analyze your financial data with advanced visualizations and insights.
+Welcome to **Cash Flow (Beta)**! 🎉 This comprehensive financial management tool helps you track income, expenses, manage budgets, and analyze your financial data with advanced visualizations and insights.
 
-![Cash Flow Pro](https://cash-flow-poc-e200d9ef805c.herokuapp.com/assets/screen-1.png)
+![Cash Flow (Beta)](https://cash-flow-poc-e200d9ef805c.herokuapp.com/assets/screen-1.png)
 
 ## ✨ New Features in v3.0
 
@@ -26,7 +26,7 @@ Welcome to **Cash Flow Pro**! 🎉 This comprehensive financial management tool 
 - Visual budget alerts and warnings
 
 ### 📈 **Advanced Analytics & Charts**
-- Cash flow projection charts
+- Cash Flow (Beta)jection charts
 - Budget vs actual comparison
 - Expense category breakdown (doughnut charts)
 - Income vs expense trend analysis
@@ -56,7 +56,7 @@ Welcome to **Cash Flow Pro**! 🎉 This comprehensive financial management tool 
 
 ## 🌐 Try It Now!
 
-Check it out here: 👉 [Cash Flow Pro](https://cash-flow-poc-e200d9ef805c.herokuapp.com/)
+Check it out here: 👉 [Cash Flow (Beta)](https://cash-flow-poc-e200d9ef805c.herokuapp.com/)
 
 ## 📸 Screenshots
 
@@ -119,7 +119,7 @@ npm run build
 - **Multi-year Support**: Track data across different years
 - **Category Budgeting**: Set and monitor category-specific budgets
 - **Advanced Filtering**: Filter transactions by date, category, type
-- **Predictive Analytics**: Cash flow projections and trend analysis
+- **Predictive Analytics**: Cash Flow (Beta)jections and trend analysis
 - **Responsive Design**: Optimized for desktop, tablet, and mobile
 
 ## 💡 Powered by AI

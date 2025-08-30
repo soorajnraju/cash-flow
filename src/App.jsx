@@ -13,7 +13,7 @@ import {
   ArcElement,
 } from "chart.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FaSun, FaMoon, FaTrashAlt, FaChartLine, FaTable, FaCog, FaHome, FaCalendarAlt, FaBrain } from "react-icons/fa";
+import { FaSun, FaMoon, FaTrashAlt, FaChartLine, FaTable, FaCog, FaHome, FaCalendarAlt, FaBrain, FaFlask } from "react-icons/fa";
 import "./App.css";
 
 // Import new components
@@ -24,6 +24,9 @@ import AdvancedCharts from "./components/AdvancedCharts";
 import DataManager from "./components/DataManager";
 import RecurringTransactionManager from "./components/RecurringTransactionManager";
 import AIAnalysisComponent from "./components/AIAnalysisComponent";
+import ValidationDemo from "./components/ValidationDemo";
+import { AlertProvider } from "./components/AlertSystem";
+import { safeParseFloat } from "./utils/validation";
 
 ChartJS.register(
   CategoryScale,
@@ -98,11 +101,11 @@ function App() {
 
     const totalIncome = currentYearTransactions
       .filter(t => t.type === 'income')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + safeParseFloat(t.amount), 0);
     
     const totalExpenses = currentYearTransactions
       .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + safeParseFloat(t.amount), 0);
 
     const netSavings = totalIncome - totalExpenses;
     const monthlyAverage = netSavings / 12;
@@ -125,7 +128,7 @@ function App() {
       ...category,
       spent: currentYearTransactions
         .filter(t => t.type === 'expense' && t.category === category.name)
-        .reduce((sum, t) => sum + t.amount, 0)
+        .reduce((sum, t) => sum + safeParseFloat(t.amount), 0)
     })));
 
     // Update income categories
@@ -133,7 +136,7 @@ function App() {
       ...category,
       actual: currentYearTransactions
         .filter(t => t.type === 'income' && t.category === category.name)
-        .reduce((sum, t) => sum + t.amount, 0)
+        .reduce((sum, t) => sum + safeParseFloat(t.amount), 0)
     })));
   };
 
@@ -208,7 +211,8 @@ function App() {
     { id: 'categories', label: 'Categories', icon: <FaCog /> },
     { id: 'charts', label: 'Analytics', icon: <FaChartLine /> },
     { id: 'ai-analysis', label: 'AI Insights', icon: <FaBrain /> },
-    { id: 'data', label: 'Data Management', icon: <FaTrashAlt /> }
+    { id: 'data', label: 'Data Management', icon: <FaTrashAlt /> },
+    { id: 'validation', label: 'Validation Demo', icon: <FaFlask /> }
   ];
 
   const allData = {
@@ -284,22 +288,25 @@ function App() {
             appVersion="3.0.0"
           />
         );
+      case 'validation':
+        return <ValidationDemo />;
       default:
         return <Dashboard insights={insights} currentYear={currentYear} />;
     }
   };
 
   return (
-    <div className="App container-fluid d-flex flex-column">
-      <div className="rotate-message">
-        Please rotate your device to landscape mode.
-      </div>
+    <AlertProvider>
+      <div className="App container-fluid d-flex flex-column">
+        <div className="rotate-message">
+          Please rotate your device to landscape mode.
+        </div>
       
       {/* Header */}
       <header className="d-flex justify-content-between align-items-center my-3 p-3 bg-light rounded">
         <div className="text-start">
-          <h1 className="mb-0 text-start">Cash Flow Pro</h1>
-          <small className="text-muted">Advanced Financial Management v3.1 - Now with AI Analysis & Recurring Transactions</small>
+          <h1 className="mb-0 text-start">Cash Flow (Beta)</h1>
+          <small className="text-muted">Advanced Financial Management v3.0 - Now with AI Analysis & Recurring Transactions</small>
         </div>
         <div className="d-flex align-items-center gap-3">
           <div className="d-flex align-items-center">
@@ -343,10 +350,11 @@ function App() {
       {/* Footer */}
       <footer className="text-center py-3 border-top mt-auto">
         <small className="text-muted">
-          Built with React, Chart.js & Bootstrap | Enhanced with AI-powered features | v3.1.0
+          Built with React, Chart.js & Bootstrap | Enhanced with AI-powered features | v3.0.0
         </small>
       </footer>
-    </div>
+      </div>
+    </AlertProvider>
   );
 }
 

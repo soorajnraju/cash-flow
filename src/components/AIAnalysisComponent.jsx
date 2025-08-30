@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaBrain, FaChartLine, FaArrowUp, FaArrowDown, FaExclamationTriangle, FaLightbulb, FaBullseye, FaEye, FaCalendarAlt } from 'react-icons/fa';
+import { safeParseFloat } from '../utils/validation';
 
 const AIAnalysisComponent = ({ 
   transactions, 
@@ -14,33 +15,44 @@ const AIAnalysisComponent = ({
   const [trends, setTrends] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [futureProjections, setFutureProjections] = useState([]);
+  const [manualMonthlyNet, setManualMonthlyNet] = useState('');
+  const [useManualOverride, setUseManualOverride] = useState(false);
 
   const formatCurrency = (amount) => {
+    const safeAmount = safeParseFloat(amount);
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD'
-    }).format(Math.abs(amount));
+    }).format(Math.abs(safeAmount));
   };
 
   useEffect(() => {
     if (transactions.length > 0) {
       performAIAnalysis();
     }
-  }, [transactions, expenseCategories, incomeCategories, recurringTransactions, currentYear]);
+  }, [transactions, expenseCategories, incomeCategories, recurringTransactions, currentYear, manualMonthlyNet, useManualOverride]);
 
   const performAIAnalysis = () => {
-    const currentYearTransactions = transactions.filter(t => 
-      new Date(t.date).getFullYear() === currentYear
-    );
+    // Validate input data
+    if (!Array.isArray(transactions)) {
+      console.warn('Invalid transactions data provided to AI analysis');
+      return;
+    }
 
-    // Calculate basic metrics
+    const currentYearTransactions = transactions.filter(t => {
+      if (!t || !t.date) return false;
+      const date = new Date(t.date);
+      return !isNaN(date.getTime()) && date.getFullYear() === currentYear;
+    });
+
+    // Calculate basic metrics with validation
     const totalIncome = currentYearTransactions
       .filter(t => t.type === 'income')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + safeParseFloat(t.amount), 0);
     
     const totalExpenses = currentYearTransactions
       .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + safeParseFloat(t.amount), 0);
 
     const netSavings = totalIncome - totalExpenses;
     const savingsRate = totalIncome > 0 ? (netSavings / totalIncome) * 100 : 0;
@@ -71,10 +83,11 @@ const AIAnalysisComponent = ({
     const categorySpending = {};
     
     expenseTransactions.forEach(t => {
+      if (!t || !t.category) return;
       if (!categorySpending[t.category]) {
         categorySpending[t.category] = { total: 0, count: 0, transactions: [] };
       }
-      categorySpending[t.category].total += t.amount;
+      categorySpending[t.category].total += safeParseFloat(t.amount);
       categorySpending[t.category].count += 1;
       categorySpending[t.category].transactions.push(t);
     });
@@ -87,7 +100,7 @@ const AIAnalysisComponent = ({
       categorySpending,
       topSpendingCategory: sortedCategories[0] || null,
       averageTransactionAmount: expenseTransactions.length > 0 
-        ? expenseTransactions.reduce((sum, t) => sum + t.amount, 0) / expenseTransactions.length 
+        ? expenseTransactions.reduce((sum, t) => sum + safeParseFloat(t.amount), 0) / expenseTransactions.length 
         : 0
     };
   };
@@ -97,9 +110,13 @@ const AIAnalysisComponent = ({
     const monthlyIncome = {};
     
     incomeTransactions.forEach(t => {
-      const month = new Date(t.date).getMonth();
+      if (!t || !t.date) return;
+      const date = new Date(t.date);
+      if (isNaN(date.getTime())) return;
+      
+      const month = date.getMonth();
       if (!monthlyIncome[month]) monthlyIncome[month] = 0;
-      monthlyIncome[month] += t.amount;
+      monthlyIncome[month] += safeParseFloat(t.amount);
     });
 
     const incomeVariability = Object.values(monthlyIncome).length > 1 
@@ -110,7 +127,7 @@ const AIAnalysisComponent = ({
       monthlyIncome,
       incomeVariability,
       averageMonthlyIncome: Object.values(monthlyIncome).length > 0
-        ? Object.values(monthlyIncome).reduce((sum, amt) => sum + amt, 0) / Object.values(monthlyIncome).length
+        ? Object.values(monthlyIncome).reduce((sum, amt) => sum + safeParseFloat(amt), 0) / Object.values(monthlyIncome).length
         : 0
     };
   };
@@ -139,15 +156,19 @@ const AIAnalysisComponent = ({
     const monthlyData = {};
     
     transactions.forEach(t => {
-      const monthKey = new Date(t.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+      if (!t || !t.date) return;
+      const date = new Date(t.date);
+      if (isNaN(date.getTime())) return;
+      
+      const monthKey = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
       if (!monthlyData[monthKey]) {
         monthlyData[monthKey] = { income: 0, expenses: 0 };
       }
       
       if (t.type === 'income') {
-        monthlyData[monthKey].income += t.amount;
+        monthlyData[monthKey].income += safeParseFloat(t.amount);
       } else {
-        monthlyData[monthKey].expenses += t.amount;
+        monthlyData[monthKey].expenses += safeParseFloat(t.amount);
       }
     });
 
@@ -358,10 +379,13 @@ const AIAnalysisComponent = ({
       });
     });
 
-    // High single transaction amounts
-    const highValueTransactions = transactions.filter(t => 
-      t.amount > (spendingAnalysis.averageTransactionAmount * 3) && t.type === 'expense'
-    );
+    // High single transaction amounts with validation
+    const highValueTransactions = transactions.filter(t => {
+      if (!t || t.type !== 'expense') return false;
+      const amount = safeParseFloat(t.amount);
+      const avgAmount = safeParseFloat(spendingAnalysis.averageTransactionAmount);
+      return amount > (avgAmount * 3);
+    });
 
     if (highValueTransactions.length > 0) {
       newAlerts.push({
@@ -376,38 +400,14 @@ const AIAnalysisComponent = ({
   };
 
   const generateFutureProjections = (totalIncome, totalExpenses, currentNetSavings) => {
-    const monthlyIncome = totalIncome / 12;
-    const monthlyExpenses = totalExpenses / 12;
-    const monthlyNetSavings = monthlyIncome - monthlyExpenses;
+    const monthlyIncome = safeParseFloat(totalIncome) / 12;
+    const monthlyExpenses = safeParseFloat(totalExpenses) / 12;
+    const actualMonthlyNetSavings = monthlyIncome - monthlyExpenses;
 
-    // Include recurring transactions in projections
-    const monthlyRecurringIncome = recurringTransactions
-      .filter(rt => rt.type === 'income' && rt.isActive)
-      .reduce((sum, rt) => {
-        const frequency = rt.frequency;
-        let monthlyAmount = 0;
-        if (frequency === 'monthly') monthlyAmount = rt.amount;
-        else if (frequency === 'weekly') monthlyAmount = rt.amount * 4.33;
-        else if (frequency === 'bi-weekly') monthlyAmount = rt.amount * 2.17;
-        else if (frequency === 'quarterly') monthlyAmount = rt.amount / 3;
-        else if (frequency === 'yearly') monthlyAmount = rt.amount / 12;
-        return sum + monthlyAmount;
-      }, 0);
-
-    const monthlyRecurringExpenses = recurringTransactions
-      .filter(rt => rt.type === 'expense' && rt.isActive)
-      .reduce((sum, rt) => {
-        const frequency = rt.frequency;
-        let monthlyAmount = 0;
-        if (frequency === 'monthly') monthlyAmount = rt.amount;
-        else if (frequency === 'weekly') monthlyAmount = rt.amount * 4.33;
-        else if (frequency === 'bi-weekly') monthlyAmount = rt.amount * 2.17;
-        else if (frequency === 'quarterly') monthlyAmount = rt.amount / 3;
-        else if (frequency === 'yearly') monthlyAmount = rt.amount / 12;
-        return sum + monthlyAmount;
-      }, 0);
-
-    const projectedMonthlyNet = (monthlyIncome + monthlyRecurringIncome) - (monthlyExpenses + monthlyRecurringExpenses);
+    // Use manual override if enabled, otherwise use calculated monthly net
+    const projectedMonthlyNet = useManualOverride && manualMonthlyNet !== '' 
+      ? safeParseFloat(manualMonthlyNet) 
+      : actualMonthlyNetSavings;
 
     const projections = [];
     const timeframes = [
@@ -455,7 +455,7 @@ const AIAnalysisComponent = ({
         icon,
         trajectory,
         isDebt,
-        confidence: calculateProjectionConfidence(timeframe.months, monthlyNetSavings, projectedMonthlyNet)
+        confidence: calculateProjectionConfidence(timeframe.months, actualMonthlyNetSavings, projectedMonthlyNet)
       });
     });
 
@@ -600,6 +600,95 @@ const AIAnalysisComponent = ({
       {futureProjections.length > 0 && (
         <div className="mb-4">
           <h5><FaEye className="text-info me-2" />Future Financial Projections</h5>
+          
+          {/* Calculation Breakdown */}
+          <div className="alert alert-light border mb-3">
+            <h6 className="mb-2">📊 Calculation Breakdown:</h6>
+            <div className="row text-center">
+              <div className="col-md-3">
+                <strong>Total Income</strong><br />
+                <span className="text-success">{formatCurrency(analysis.totalIncome)}</span>
+              </div>
+              <div className="col-md-3">
+                <strong>Total Expenses</strong><br />
+                <span className="text-danger">{formatCurrency(analysis.totalExpenses)}</span>
+              </div>
+              <div className="col-md-3">
+                <strong>Net Savings</strong><br />
+                <span className={analysis.netSavings >= 0 ? 'text-success' : 'text-danger'}>
+                  {formatCurrency(analysis.netSavings)}
+                </span>
+              </div>
+              <div className="col-md-3">
+                <strong>Monthly Average</strong><br />
+                <span className={analysis.monthlyAverage >= 0 ? 'text-success' : 'text-danger'}>
+                  {formatCurrency(analysis.monthlyAverage)}
+                </span>
+              </div>
+            </div>
+            <small className="text-muted mt-2 d-block text-center">
+              Monthly Average = Net Savings ÷ 12 months = {formatCurrency(analysis.netSavings)} ÷ 12 = {formatCurrency(analysis.monthlyAverage)}
+            </small>
+            
+            {/* Manual Override Section */}
+            <div className="mt-3 border-top p-0 override-container">
+              <div className="p-3">
+                <div className="d-flex align-items-center">
+                  <div className="override-switch me-3">
+                    <input 
+                      type="checkbox" 
+                      id="manualOverrideCheck" 
+                      className="switch-checkbox" 
+                      checked={useManualOverride}
+                      onChange={(e) => setUseManualOverride(e.target.checked)}
+                    />
+                    <label htmlFor="manualOverrideCheck" className="switch-label"></label>
+                  </div>
+                  <div>
+                    <h6 className="mb-0 fw-bold text-primary">🎯 Override Monthly Net for Projections</h6>
+                    <small className="text-muted">Use a custom monthly savings amount for future projections</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div className={`custom-amount-container p-3 border-top ${!useManualOverride ? 'opacity-75' : ''}`}>
+                <div className="row align-items-center">
+                  <div className="col-md-4">
+                    <label className={`fw-bold mb-0 ${!useManualOverride ? 'text-muted' : ''}`}>Custom Monthly Net:</label>
+                  </div>
+                  <div className="col-md-8">
+                    <div className="d-flex align-items-center">
+                      <div className="input-group">
+                        <span className={`input-group-text ${useManualOverride ? '' : 'bg-secondary'}`}>$</span>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder={analysis?.monthlyAverage ? analysis.monthlyAverage.toFixed(2) : '0.00'}
+                          value={manualMonthlyNet}
+                          onChange={(e) => setManualMonthlyNet(e.target.value)}
+                          step="0.01"
+                          disabled={!useManualOverride}
+                        />
+                        <span className={`input-group-text ${useManualOverride ? '' : 'bg-secondary'}`}>/month</span>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      {useManualOverride && manualMonthlyNet ? (
+                        <div className="status-message active">
+                          <span className="status-icon">✓</span> Using custom monthly net: <strong>{formatCurrency(manualMonthlyNet)}</strong>
+                        </div>
+                      ) : (
+                        <div className="status-message">
+                          <span className="status-icon">i</span> Currently using calculated average: <strong>{analysis?.monthlyAverage ? formatCurrency(analysis.monthlyAverage) : '$0.00'}</strong>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div className="row">
             {futureProjections.map((projection, index) => (
               <div key={index} className="col-xl-4 col-lg-6 col-md-6 mb-3">
@@ -667,10 +756,14 @@ const AIAnalysisComponent = ({
               <div>
                 <strong>About These Projections:</strong>
                 <p className="mb-0 mt-1">
-                  These predictions are based on your current spending patterns, income trends, and active recurring transactions. 
+                  These predictions are based on your <strong>actual historical performance</strong> from your recorded transactions. 
+                  The monthly net amount reflects your real average monthly savings/spending pattern over the current year.
                   Confidence levels decrease for longer time periods. Use these insights to make informed financial decisions and 
                   adjust your budget accordingly.
                 </p>
+                <small className="text-muted mt-2 d-block">
+                  <strong>Note:</strong> Monthly Net = (Total Annual Income ÷ 12) - (Total Annual Expenses ÷ 12)
+                </small>
               </div>
             </div>
           </div>

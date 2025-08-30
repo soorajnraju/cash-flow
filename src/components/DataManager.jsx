@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { FaDownload, FaUpload, FaFileExport, FaFileImport } from 'react-icons/fa';
+import React, { useState, useRef } from 'react';
+import { FaDownload, FaUpload, FaFileExport, FaFileImport, FaChartBar } from 'react-icons/fa';
+import { safeParseFloat } from '../utils/validation';
+import { useAlert } from './AlertSystem';
 
 const DataManager = ({ 
   data, 
@@ -7,6 +9,7 @@ const DataManager = ({
   onReset,
   appVersion = "3.0.0" 
 }) => {
+  const { showSuccess, showError, showWarning } = useAlert();
   const [importFile, setImportFile] = useState(null);
 
   const handleExportJSON = () => {
@@ -68,12 +71,12 @@ const DataManager = ({
         // Validate the imported data structure
         if (validateImportData(importData)) {
           onImport(importData);
-          alert('Data imported successfully!');
+          showSuccess('Data imported successfully!');
         } else {
-          alert('Invalid file format. Please select a valid cash flow backup file.');
+          showError('Invalid file format. Please select a valid cash flow backup file.');
         }
       } catch (error) {
-        alert('Error reading file. Please make sure it\'s a valid JSON file.');
+        showError('Error reading file. Please make sure it\'s a valid JSON file.');
       }
     };
     reader.readAsText(file);
@@ -104,12 +107,12 @@ const DataManager = ({
               date: new Date(values[0]).toISOString(),
               type: values[1],
               category: values[2],
-              amount: parseFloat(values[3]) || 0,
+              amount: safeParseFloat(values[3]),
               description: values[4] || '',
               recurring: false
             };
           })
-          .filter(t => t.amount > 0); // Only include valid transactions
+          .filter(t => safeParseFloat(t.amount) > 0); // Only include valid transactions
 
         if (transactions.length > 0) {
           // Create import data structure
@@ -119,12 +122,12 @@ const DataManager = ({
           };
           
           onImport(importData);
-          alert(`Successfully imported ${transactions.length} transactions!`);
+          showSuccess(`Successfully imported ${transactions.length} transactions!`);
         } else {
-          alert('No valid transactions found in the CSV file.');
+          showWarning('No valid transactions found in the CSV file.');
         }
       } catch (error) {
-        alert('Error reading CSV file. Please make sure it\'s properly formatted.');
+        showError('Error reading CSV file. Please make sure it\'s properly formatted.');
       }
     };
     reader.readAsText(file);
@@ -146,7 +149,7 @@ const DataManager = ({
   const handleReset = () => {
     if (window.confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
       onReset();
-      alert('All data has been reset successfully.');
+      showSuccess('All data has been reset successfully.');
     }
   };
 

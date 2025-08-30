@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaPlay, FaPause } from 'react-icons/fa';
+import { safeParseFloat } from '../utils/validation';
+import { useAlert } from './AlertSystem';
 
 const RecurringTransactionManager = ({ 
   recurringTransactions, 
@@ -8,6 +10,7 @@ const RecurringTransactionManager = ({
   incomeCategories,
   onGenerateTransactions 
 }) => {
+  const { showSuccess, showError, showWarning } = useAlert();
   const [showAddRecurring, setShowAddRecurring] = useState(false);
   const [editingRecurring, setEditingRecurring] = useState(null);
   const [newRecurring, setNewRecurring] = useState({
@@ -16,44 +19,47 @@ const RecurringTransactionManager = ({
     category: '',
     amount: '',
     frequency: 'monthly',
-    startDate: '',
+    startDate: new Date().toISOString().split('T')[0], // Set default to today
     isActive: true,
     description: ''
   });
 
   const formatCurrency = (amount) => {
+    const safeAmount = safeParseFloat(amount);
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD'
-    }).format(amount);
+    }).format(safeAmount);
   };
 
-  const handleAddRecurring = () => {
+  const addRecurring = () => {
     if (!newRecurring.name || !newRecurring.amount || !newRecurring.category) {
-      alert('Please fill in all required fields');
+      showError('Please fill in all required fields');
       return;
     }
 
-    const recurring = {
+    const recurringTransaction = {
       id: Date.now(),
       ...newRecurring,
-      amount: parseFloat(newRecurring.amount),
-      createdAt: new Date().toISOString()
+      amount: safeParseFloat(newRecurring.amount),
+      isActive: true,
+      lastGenerated: null,
+      nextDue: new Date().toISOString().split('T')[0]
     };
 
-    setRecurringTransactions(prev => [...prev, recurring]);
-    
+    setRecurringTransactions([...recurringTransactions, recurringTransaction]);
     setNewRecurring({
       name: '',
-      type: 'income',
+      type: 'expense',
       category: '',
       amount: '',
       frequency: 'monthly',
-      startDate: '',
+      startDate: new Date().toISOString().split('T')[0],
       isActive: true,
       description: ''
     });
     setShowAddRecurring(false);
+    showSuccess(`Added recurring ${newRecurring.type}: ${newRecurring.name}`);
   };
 
   const handleEditRecurring = (recurring) => {
@@ -65,7 +71,7 @@ const RecurringTransactionManager = ({
   const handleUpdateRecurring = () => {
     setRecurringTransactions(prev => prev.map(r => 
       r.id === editingRecurring.id 
-        ? { ...newRecurring, amount: parseFloat(newRecurring.amount) }
+        ? { ...newRecurring, amount: safeParseFloat(newRecurring.amount) }
         : r
     ));
     setEditingRecurring(null);
@@ -76,10 +82,11 @@ const RecurringTransactionManager = ({
       category: '',
       amount: '',
       frequency: 'monthly',
-      startDate: '',
+      startDate: new Date().toISOString().split('T')[0],
       isActive: true,
       description: ''
     });
+    showSuccess('Recurring transaction updated successfully');
   };
 
   const handleDeleteRecurring = (id) => {
@@ -121,7 +128,9 @@ const RecurringTransactionManager = ({
     
     if (generatedTransactions.length > 0) {
       onGenerateTransactions(generatedTransactions);
-      alert(`Generated ${generatedTransactions.length} recurring transactions for this month!`);
+      showSuccess(`Generated ${generatedTransactions.length} recurring transactions for this month!`);
+    } else {
+      showWarning('No recurring transactions were due for generation this month.');
     }
   };
 
@@ -203,7 +212,7 @@ const RecurringTransactionManager = ({
                 <div className="d-grid">
                   <button 
                     className="btn btn-success"
-                    onClick={editingRecurring ? handleUpdateRecurring : handleAddRecurring}
+                    onClick={editingRecurring ? handleUpdateRecurring : addRecurring}
                   >
                     {editingRecurring ? 'Update' : 'Add'}
                   </button>
@@ -225,13 +234,18 @@ const RecurringTransactionManager = ({
                 </select>
               </div>
               <div className="col-md-3">
-                <label className="form-label">Start Date</label>
+                <label className="form-label">
+                  Start Date <span className="text-danger">*</span>
+                </label>
                 <input
                   type="date"
                   className="form-control"
                   value={newRecurring.startDate}
                   onChange={(e) => setNewRecurring(prev => ({ ...prev, startDate: e.target.value }))}
+                  min={new Date().toISOString().split('T')[0]}
+                  required
                 />
+                <small className="text-muted">When should this recurring transaction start?</small>
               </div>
               <div className="col-md-6">
                 <label className="form-label">Description</label>
@@ -328,7 +342,7 @@ const RecurringTransactionManager = ({
                     {formatCurrency(
                       recurringTransactions
                         .filter(r => r.type === 'income' && r.isActive && r.frequency === 'monthly')
-                        .reduce((sum, r) => sum + r.amount, 0)
+                        .reduce((sum, r) => sum + safeParseFloat(r.amount), 0)
                     )}
                   </h5>
                 </div>
@@ -342,7 +356,7 @@ const RecurringTransactionManager = ({
                     {formatCurrency(
                       recurringTransactions
                         .filter(r => r.type === 'expense' && r.isActive && r.frequency === 'monthly')
-                        .reduce((sum, r) => sum + r.amount, 0)
+                        .reduce((sum, r) => sum + safeParseFloat(r.amount), 0)
                     )}
                   </h5>
                 </div>
@@ -355,13 +369,13 @@ const RecurringTransactionManager = ({
                   <h5 className={
                     (recurringTransactions
                       .filter(r => r.isActive && r.frequency === 'monthly')
-                      .reduce((sum, r) => sum + (r.type === 'income' ? r.amount : -r.amount), 0)) >= 0 
+                      .reduce((sum, r) => sum + (r.type === 'income' ? safeParseFloat(r.amount) : -safeParseFloat(r.amount)), 0)) >= 0 
                         ? 'text-success' : 'text-danger'
                   }>
                     {formatCurrency(
                       recurringTransactions
                         .filter(r => r.isActive && r.frequency === 'monthly')
-                        .reduce((sum, r) => sum + (r.type === 'income' ? r.amount : -r.amount), 0)
+                        .reduce((sum, r) => sum + (r.type === 'income' ? safeParseFloat(r.amount) : -safeParseFloat(r.amount)), 0)
                     )}
                   </h5>
                 </div>
