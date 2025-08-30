@@ -24,7 +24,7 @@ import AdvancedCharts from "./components/AdvancedCharts";
 import DataManager from "./components/DataManager";
 import RecurringTransactionManager from "./components/RecurringTransactionManager";
 import AIAnalysisComponent from "./components/AIAnalysisComponent";
-import ValidationDemo from "./components/ValidationDemo";
+// import ValidationDemo from "./components/ValidationDemo";
 import { AlertProvider } from "./components/AlertSystem";
 import { safeParseFloat } from "./utils/validation";
 
@@ -212,7 +212,7 @@ function App() {
     { id: 'charts', label: 'Analytics', icon: <FaChartLine /> },
     { id: 'ai-analysis', label: 'AI Insights', icon: <FaBrain /> },
     { id: 'data', label: 'Data Management', icon: <FaTrashAlt /> },
-    { id: 'validation', label: 'Validation Demo', icon: <FaFlask /> }
+  // { id: 'validation', label: 'Validation Demo', icon: <FaFlask /> }
   ];
 
   const allData = {
@@ -288,8 +288,8 @@ function App() {
             appVersion="3.0.0"
           />
         );
-      case 'validation':
-        return <ValidationDemo />;
+  // case 'validation':
+  //   return <ValidationDemo />;
       default:
         return <Dashboard insights={insights} currentYear={currentYear} />;
     }

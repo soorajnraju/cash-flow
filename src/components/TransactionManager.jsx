@@ -429,20 +429,22 @@ const TransactionManager = ({
                     </td>
                     <td>
                       <div className="btn-group btn-group-sm" role="group">
-                        <button 
-                          className="btn btn-outline-primary btn-sm"
-                          onClick={() => handleEditTransaction(transaction)}
-                          title="Edit"
-                        >
-                          <FaEdit />
-                        </button>
-                        <button 
-                          className="btn btn-outline-danger btn-sm"
-                          onClick={() => handleDeleteTransaction(transaction.id)}
-                          title="Delete"
-                        >
-                          <FaTrash />
-                        </button>
+                          <div className="d-flex justify-content-center align-items-center gap-2">
+                            <button 
+                              className="btn btn-outline-primary btn-sm"
+                              onClick={() => handleEditTransaction(transaction)}
+                              title="Edit"
+                            >
+                              <FaEdit />
+                            </button>
+                            <button 
+                              className="btn btn-outline-danger btn-sm"
+                              onClick={() => handleDeleteTransaction(transaction.id)}
+                              title="Delete"
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
                       </div>
                     </td>
                   </tr>

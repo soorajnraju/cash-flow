@@ -630,60 +630,50 @@ const AIAnalysisComponent = ({
               Monthly Average = Net Savings ÷ 12 months = {formatCurrency(analysis.netSavings)} ÷ 12 = {formatCurrency(analysis.monthlyAverage)}
             </small>
             
-            {/* Manual Override Section */}
-            <div className="mt-3 border-top p-0 override-container">
-              <div className="p-3">
-                <div className="d-flex align-items-center">
-                  <div className="override-switch me-3">
-                    <input 
-                      type="checkbox" 
-                      id="manualOverrideCheck" 
-                      className="switch-checkbox" 
-                      checked={useManualOverride}
-                      onChange={(e) => setUseManualOverride(e.target.checked)}
-                    />
-                    <label htmlFor="manualOverrideCheck" className="switch-label"></label>
-                  </div>
-                  <div>
-                    <h6 className="mb-0 fw-bold text-primary">🎯 Override Monthly Net for Projections</h6>
-                    <small className="text-muted">Use a custom monthly savings amount for future projections</small>
-                  </div>
+            {/* Manual Override Section - Enhanced Card Layout */}
+            <div className="mt-4 mb-4 override-container" style={{ background: '#f8fafc', borderRadius: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '2rem 1.5rem' }}>
+              <div className="d-flex flex-wrap align-items-center justify-content-center gap-4">
+                {/* Toggle Button */}
+                <div className="form-check form-switch" style={{ minWidth: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="manualOverrideCheck"
+                    checked={useManualOverride}
+                    onChange={(e) => setUseManualOverride(e.target.checked)}
+                    style={{ width: '3rem', height: '1.7rem', cursor: 'pointer', border: '2px solid #0d6efd', background: useManualOverride ? '#0d6efd' : '#e9ecef' }}
+                  />
                 </div>
-              </div>
-              
-              <div className={`custom-amount-container p-3 border-top ${!useManualOverride ? 'opacity-75' : ''}`}>
-                <div className="row align-items-center">
-                  <div className="col-md-4">
-                    <label className={`fw-bold mb-0 ${!useManualOverride ? 'text-muted' : ''}`}>Custom Monthly Net:</label>
-                  </div>
-                  <div className="col-md-8">
-                    <div className="d-flex align-items-center">
-                      <div className="input-group">
-                        <span className={`input-group-text ${useManualOverride ? '' : 'bg-secondary'}`}>$</span>
-                        <input
-                          type="number"
-                          className="form-control"
-                          placeholder={analysis?.monthlyAverage ? analysis.monthlyAverage.toFixed(2) : '0.00'}
-                          value={manualMonthlyNet}
-                          onChange={(e) => setManualMonthlyNet(e.target.value)}
-                          step="0.01"
-                          disabled={!useManualOverride}
-                        />
-                        <span className={`input-group-text ${useManualOverride ? '' : 'bg-secondary'}`}>/month</span>
-                      </div>
-                    </div>
-                    <div className="mt-2">
-                      {useManualOverride && manualMonthlyNet ? (
-                        <div className="status-message active">
-                          <span className="status-icon">✓</span> Using custom monthly net: <strong>{formatCurrency(manualMonthlyNet)}</strong>
-                        </div>
-                      ) : (
-                        <div className="status-message">
-                          <span className="status-icon">i</span> Currently using calculated average: <strong>{analysis?.monthlyAverage ? formatCurrency(analysis.monthlyAverage) : '$0.00'}</strong>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                <div style={{ minWidth: '220px', textAlign: 'center' }}>
+                  <label htmlFor="manualOverrideCheck" className="fw-bold text-primary mb-1" style={{ fontSize: '1.2rem', cursor: 'pointer' }}>
+                    🎯 Override Monthly Net for Projections
+                  </label>
+                  <div className="text-muted" style={{ fontSize: '0.98rem' }}>Use a custom monthly savings amount for future projections</div>
+                </div>
+                <div className="input-group" style={{ maxWidth: '240px', minWidth: '180px', alignItems: 'center' }}>
+                  <span className={`input-group-text ${useManualOverride ? '' : 'bg-secondary'}`}>$</span>
+                  <input
+                    type="number"
+                    className="form-control text-center"
+                    placeholder={analysis?.monthlyAverage ? analysis.monthlyAverage.toFixed(2) : '0.00'}
+                    value={manualMonthlyNet}
+                    onChange={(e) => setManualMonthlyNet(e.target.value)}
+                    step="0.01"
+                    disabled={!useManualOverride}
+                    style={{ fontSize: '1.35rem', fontWeight: 500, height: '2.7rem', borderRadius: '0.5rem' }}
+                  />
+                  <span className={`input-group-text ${useManualOverride ? '' : 'bg-secondary'}`}>/month</span>
+                </div>
+                <div style={{ minWidth: '220px', textAlign: 'center' }}>
+                  {useManualOverride && manualMonthlyNet ? (
+                    <span className="status-message active text-success" style={{ fontSize: '1.05rem' }}>
+                      <span className="status-icon">✓</span> Using custom monthly net: <strong>{formatCurrency(manualMonthlyNet)}</strong>
+                    </span>
+                  ) : (
+                    <span className="status-message text-muted" style={{ fontSize: '1.05rem' }}>
+                      <span className="status-icon">i</span> Currently using calculated average: <strong>{analysis?.monthlyAverage ? formatCurrency(analysis.monthlyAverage) : '$0.00'}</strong>
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
