@@ -311,6 +311,36 @@ const AIAnalysisComponent = ({
     setRecommendations(newRecommendations);
   };
 
+  const generateDemoRecommendations = () => {
+    // Generate some demo recommendations if no real data is available
+    if (transactions.length < 3) {
+      return [
+        {
+          priority: 'high',
+          icon: <FaBullseye />,
+          title: 'Start Tracking Your Finances',
+          description: 'Add your income and expense transactions to get personalized recommendations.',
+          action: 'Go to Transactions tab and add some data'
+        },
+        {
+          priority: 'medium',
+          icon: <FaLightbulb />,
+          title: 'Set Up Recurring Transactions',
+          description: 'Automate tracking of regular income and expenses like salary, rent, and subscriptions.',
+          action: 'Visit the Recurring tab to set up automatic transactions'
+        },
+        {
+          priority: 'medium',
+          icon: <FaExclamationTriangle />,
+          title: 'Create Budget Categories',
+          description: 'Set budgets for different expense categories to track your spending limits.',
+          action: 'Use the Categories tab to set up budgets'
+        }
+      ];
+    }
+    return [];
+  };
+
   const generateAlerts = (budgetAnalysis, spendingAnalysis) => {
     const newAlerts = [];
 
@@ -457,6 +487,14 @@ const AIAnalysisComponent = ({
           <FaBrain className="fs-1 text-muted mb-3" />
           <h5>AI Analysis</h5>
           <p className="text-muted">Add some transactions to get AI-powered insights about your financial health.</p>
+          <div className="alert alert-info mt-3">
+            <h6>To get meaningful recommendations, please add:</h6>
+            <ul className="text-start mb-0">
+              <li>At least 3-5 transactions (income and expenses)</li>
+              <li>Set up some expense categories with budgets</li>
+              <li>Add recurring transactions for regular income/expenses</li>
+            </ul>
+          </div>
         </div>
       </div>
     );
@@ -466,7 +504,12 @@ const AIAnalysisComponent = ({
     <div className="ai-analysis-component">
       <div className="d-flex align-items-center mb-4">
         <FaBrain className="text-primary me-2 fs-3" />
-        <h3>AI Financial Analysis</h3>
+        <div>
+          <h3>AI Financial Analysis</h3>
+          <small className="text-muted">
+            Analyzing {analysis.transactionCount} transactions for {currentYear}
+          </small>
+        </div>
       </div>
 
       {/* Key Metrics */}
@@ -658,27 +701,93 @@ const AIAnalysisComponent = ({
         {/* Recommendations */}
         <div className="col-md-6">
           <h5><FaBullseye className="text-primary me-2" />Recommendations</h5>
-          {recommendations.map((recommendation, index) => (
-            <div key={index} className={`card mb-2 border-${recommendation.priority === 'high' ? 'danger' : 'warning'}`}>
-              <div className="card-body">
-                <div className="d-flex align-items-start">
-                  <div className={`me-2 text-${recommendation.priority === 'high' ? 'danger' : 'warning'}`}>
-                    {recommendation.icon}
+          {recommendations.length === 0 ? (
+            transactions.length < 3 ? (
+              generateDemoRecommendations().map((recommendation, index) => (
+                <div key={index} className={`card mb-2 border-${recommendation.priority === 'high' ? 'danger' : 'warning'}`}>
+                  <div className="card-body">
+                    <div className="d-flex align-items-start">
+                      <div className={`me-2 text-${recommendation.priority === 'high' ? 'danger' : 'warning'}`}>
+                        {recommendation.icon}
+                      </div>
+                      <div>
+                        <h6 className="mb-1">
+                          {recommendation.title}
+                          <span className={`badge bg-${recommendation.priority === 'high' ? 'danger' : 'warning'} ms-2`}>
+                            {recommendation.priority}
+                          </span>
+                        </h6>
+                        <small className="d-block mb-1">{recommendation.description}</small>
+                        <small className="text-muted"><strong>Action:</strong> {recommendation.action}</small>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h6 className="mb-1">
-                      {recommendation.title}
-                      <span className={`badge bg-${recommendation.priority === 'high' ? 'danger' : 'warning'} ms-2`}>
-                        {recommendation.priority}
-                      </span>
-                    </h6>
-                    <small className="d-block mb-1">{recommendation.description}</small>
-                    <small className="text-muted"><strong>Action:</strong> {recommendation.action}</small>
+                </div>
+              ))
+            ) : (
+              <div className="card border-success">
+                <div className="card-body text-center">
+                  <FaBullseye className="text-success fs-2 mb-2" />
+                  <h6 className="text-success">Great Job!</h6>
+                  <small className="text-muted">
+                    No specific recommendations at this time. Your financial habits look good! 
+                    Keep monitoring your progress and maintain your current savings rate.
+                  </small>
+                </div>
+              </div>
+            )
+          ) : (
+            recommendations.map((recommendation, index) => (
+              <div key={index} className={`card mb-2 border-${recommendation.priority === 'high' ? 'danger' : 'warning'}`}>
+                <div className="card-body">
+                  <div className="d-flex align-items-start">
+                    <div className={`me-2 text-${recommendation.priority === 'high' ? 'danger' : 'warning'}`}>
+                      {recommendation.icon}
+                    </div>
+                    <div>
+                      <h6 className="mb-1">
+                        {recommendation.title}
+                        <span className={`badge bg-${recommendation.priority === 'high' ? 'danger' : 'warning'} ms-2`}>
+                          {recommendation.priority}
+                        </span>
+                      </h6>
+                      <small className="d-block mb-1">{recommendation.description}</small>
+                      <small className="text-muted"><strong>Action:</strong> {recommendation.action}</small>
+                    </div>
                   </div>
                 </div>
               </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* How It Works Section */}
+      <div className="card bg-light border-info mb-4">
+        <div className="card-header bg-info text-white">
+          <h6 className="mb-0"><FaBrain className="me-2" />How Our AI Analysis Works</h6>
+        </div>
+        <div className="card-body">
+          <div className="row">
+            <div className="col-md-6">
+              <h6>Financial Algorithms Used:</h6>
+              <ul className="small mb-0">
+                <li><strong>Savings Rate Analysis:</strong> (Income - Expenses) / Income × 100</li>
+                <li><strong>Spending Pattern Recognition:</strong> Category-wise expense distribution</li>
+                <li><strong>Budget Performance Tracking:</strong> Actual vs budgeted variance analysis</li>
+                <li><strong>Income Stability Assessment:</strong> Statistical variance calculations</li>
+              </ul>
             </div>
-          ))}
+            <div className="col-md-6">
+              <h6>Recommendation Engine:</h6>
+              <ul className="small mb-0">
+                <li><strong>Rule-Based Logic:</strong> Based on financial planning best practices</li>
+                <li><strong>Trend Analysis:</strong> Month-over-month pattern recognition</li>
+                <li><strong>Future Projections:</strong> Linear and exponential growth models</li>
+                <li><strong>Risk Assessment:</strong> Emergency fund and debt-to-income ratios</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

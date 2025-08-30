@@ -290,7 +290,7 @@ function App() {
   };
 
   return (
-    <div className="App container-fluid">
+    <div className="App container-fluid d-flex flex-column">
       <div className="rotate-message">
         Please rotate your device to landscape mode.
       </div>
@@ -336,12 +336,12 @@ function App() {
       </nav>
 
       {/* Main Content */}
-      <main>
+      <main className="flex-grow-1">
         {renderCurrentView()}
       </main>
 
       {/* Footer */}
-      <footer className="text-center my-4 py-3 border-top">
+      <footer className="text-center py-3 border-top mt-auto">
         <small className="text-muted">
           Built with React, Chart.js & Bootstrap | Enhanced with AI-powered features | v3.1.0
         </small>
