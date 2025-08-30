@@ -1,24 +1,32 @@
 #root {
   box-sizing: border-box;
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .App {
   font-family: var(--font-family);
-  padding: 20px;
+  padding: 10px;
   background-color: var(--light-color);
   color: var(--dark-color);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
+  max-width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .App h1 {
-  text-align: center;
+  text-align: left;
   color: var(--primary-color);
 }
 
 .App div {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .App label {
@@ -55,6 +63,125 @@
   margin-top: 10px;
 }
 
+/* Enhanced styling for new components */
+.dashboard-container .card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.dashboard-container .card:hover {
+  transform: translateY(-2px);
+}
+
+.nav-pills .nav-link {
+  color: var(--dark-color);
+  border-radius: 8px;
+  margin: 0 2px;
+  transition: all 0.3s ease;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.transaction-manager .table th {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.transaction-manager .table td {
+  vertical-align: middle;
+}
+.transaction-manager .form-check{
+display: flex;
+justify-content: space-between;
+}
+.transaction-manager #recurringCheck {
+  width: 1.5rem;
+    height: 1.5rem;
+}
+
+.category-manager .table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.advanced-charts .card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.data-manager .card {
+  border-radius: 8px;
+}
+
+.data-manager .card-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+}
+
+/* Responsive enhancements */
+@media (max-width: 768px) {
+  .nav-pills .nav-link span {
+    display: none;
+  }
+  
+  .dashboard-container .col-md-3 {
+    margin-bottom: 1rem;
+  }
+  
+  .App {
+    padding: 8px;
+    border-radius: 0;
+  }
+  
+  header {
+    padding: 8px !important;
+    margin: 8px 0 !important;
+  }
+  
+  .card-body {
+    padding: 12px;
+  }
+  
+  .container-fluid {
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .App {
+    padding: 5px;
+  }
+  
+  .nav-pills {
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .nav-pills .nav-link {
+    min-width: 60px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .card-body {
+    padding: 8px;
+  }
+  
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+}
+
 canvas {
   margin-top: 20px;
 }
@@ -79,5 +206,1032 @@ canvas {
 @media only screen and (orientation: landscape) {
   .rotate-message {
     display: none;
+  }
+}
+
+/* Loading states and animations */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Enhanced form styling */
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Better button styling */
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Chart container styling */
+.chart-container {
+  position: relative;
+  height: 400px;
+  margin: 20px 0;
+}
+
+/* Status badges */
+.badge {
+  font-size: 0.8em;
+  padding: 0.5em 0.8em;
+}
+
+/* Enhanced card styling */
+.card {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark theme styles */
+.dark-theme {
+  background-color: var(--dark-color) !important;
+  color: var(--light-color) !important;
+}
+
+.dark-theme .App {
+  background-color: #1a1a1a;
+  color: #f8f9fa;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .bg-light {
+  background-color: #2d2d2d !important;
+  color: #f8f9fa !important;
+}
+
+.dark-theme .card {
+  background-color: #2d2d2d;
+  color: #f8f9fa;
+  border: 1px solid #444;
+}
+
+.dark-theme .table {
+  background-color: #2d2d2d;
+  color: #f8f9fa;
+}
+
+.dark-theme .table th {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: #444;
+}
+
+.dark-theme .table td {
+  border-color: #444;
+}
+
+.dark-theme .form-control,
+.dark-theme .form-select {
+  background-color: #2d2d2d;
+  border-color: #444;
+  color: #f8f9fa;
+}
+
+.dark-theme .form-control:focus,
+.dark-theme .form-select:focus {
+  background-color: #2d2d2d;
+  border-color: var(--primary-color);
+  color: #f8f9fa;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.dark-theme .btn-outline-secondary {
+  color: #f8f9fa;
+  border-color: #6c757d;
+}
+
+.dark-theme .btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #fff;
+}
+
+.dark-theme .nav-pills .nav-link {
+  color: #f8f9fa;
+}
+
+.dark-theme .nav-pills .nav-link:hover {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.dark-theme .nav-pills .nav-link.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.dark-theme .alert {
+  background-color: #2d2d2d;
+  border-color: #444;
+}
+
+.dark-theme .border-top {
+  border-color: #444 !important;
+}
+
+.dark-theme .text-muted {
+  color: #adb5bd !important;
+}
+
+/* Sticky Footer */
+footer {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+/* Alert System Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.alert-container .alert {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.alert-container .alert.removing {
+  animation: slideOutRight 0.3s ease-out;
+}
+
+/* Form Validation Styles */
+.form-control.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+}
+
+.form-control.is-valid {
+  border-color: #198754;
+  background-image: none;
+}
+
+.invalid-feedback {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+}
+
+.has-validation .form-control {
+  padding-right: calc(1.5em + 0.75rem);
+}
+
+/* Loading states */
+.form-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.form-loading .btn {
+  position: relative;
+}
+
+.form-loading .btn::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid transparent;
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Enhanced button styling for dark theme */
+.dark-theme .btn-primary {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: white !important;
+}
+
+.dark-theme .btn-primary:hover {
+  background-color: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+}
+
+.dark-theme .btn-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: white !important;
+}
+
+.dark-theme .btn-danger:hover {
+  background-color: #bb2d3b !important;
+  border-color: #b02a37 !important;
+}
+
+.dark-theme .btn-success {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+  color: white !important;
+}
+
+.dark-theme .btn-success:hover {
+  background-color: #157347 !important;
+  border-color: #146c43 !important;
+}
+
+.dark-theme .btn-warning {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.dark-theme .btn-warning:hover {
+  background-color: #ffca2c !important;
+  border-color: #ffc720 !important;
+}
+
+.dark-theme .btn-info {
+  background-color: #0dcaf0 !important;
+  border-color: #0dcaf0 !important;
+  color: #212529 !important;
+}
+
+.dark-theme .btn-info:hover {
+  background-color: #31d2f2 !important;
+  border-color: #25cff2 !important;
+}
+
+.dark-theme .btn-secondary {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: white !important;
+}
+
+.dark-theme .btn-secondary:hover {
+  background-color: #5c636a !important;
+  border-color: #565e64 !important;
+}
+
+/* Action buttons in tables */
+.dark-theme .table .btn {
+  opacity: 0.9;
+}
+
+.dark-theme .table .btn:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+/* Outline buttons for dark theme */
+.dark-theme .btn-outline-primary {
+  color: #6ea8fe !important;
+  border-color: #6ea8fe !important;
+}
+
+.dark-theme .btn-outline-primary:hover {
+  background-color: #6ea8fe !important;
+  border-color: #6ea8fe !important;
+  color: #000 !important;
+}
+
+.dark-theme .btn-outline-danger {
+  color: #ea868f !important;
+  border-color: #ea868f !important;
+}
+
+.dark-theme .btn-outline-danger:hover {
+  background-color: #ea868f !important;
+  border-color: #ea868f !important;
+  color: #000 !important;
+}
+
+/* Small action buttons styling */
+.dark-theme .btn-sm {
+  font-size: 0.75rem;
+  border-radius: 4px;
+}
+
+/* Badge styling for recurring label */
+.dark-theme .badge {
+  opacity: 0.9;
+}
+
+.dark-theme .badge.bg-primary {
+  background-color: #0d6efd !important;
+}
+
+/* Date picker component styling */
+.date-picker-component .input-group-text {
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+.dark-theme .date-picker-component .input-group-text {
+  background-color: #2d2d2d !important;
+  border-color: #444 !important;
+  color: #f8f9fa !important;
+}
+
+.dark-theme .date-picker-component input[type="date"] {
+  background-color: #2d2d2d !important;
+  border-color: #444 !important;
+  color: #f8f9fa !important;
+}
+
+.dark-theme .date-picker-component input[type="date"]:focus {
+  background-color: #2d2d2d !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Date presets styling */
+.date-presets .btn-group-sm .btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  margin-right: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.dark-theme .date-presets .btn-outline-secondary {
+  color: #adb5bd !important;
+  border-color: #6c757d !important;
+}
+
+.dark-theme .date-presets .btn-outline-secondary:hover {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: white !important;
+}
+
+/* Enhanced Calendar Date Picker Styles - React DatePicker */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker-popper {
+  z-index: 1050 !important;
+}
+
+.react-datepicker {
+  font-family: inherit !important;
+  border: 1px solid var(--bs-border-color) !important;
+  border-radius: 0.5rem !important;
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  font-size: 0.875rem !important;
+}
+
+.react-datepicker__header {
+  background-color: var(--bs-primary) !important;
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+  color: white !important;
+  padding: 1rem 0.5rem 0.5rem !important;
+}
+
+.react-datepicker__current-month {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.react-datepicker__day-names {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-bottom: 0 !important;
+  background-color: var(--bs-primary) !important;
+  padding: 0 0.5rem !important;
+}
+
+.react-datepicker__day-name {
+  color: white !important;
+  font-weight: 500 !important;
+  width: 2rem !important;
+  line-height: 2rem !important;
+  text-align: center !important;
+  font-size: 0.75rem !important;
+}
+
+.react-datepicker__navigation {
+  top: 1rem !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  border-radius: 0.25rem !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.react-datepicker__navigation:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.react-datepicker__navigation--previous {
+  left: 1rem !important;
+  border-right-color: white !important;
+}
+
+.react-datepicker__navigation--next {
+  right: 1rem !important;
+  border-left-color: white !important;
+}
+
+.react-datepicker__month-container {
+  background-color: var(--bs-body-bg) !important;
+}
+
+.react-datepicker__month {
+  margin: 0.5rem !important;
+}
+
+.react-datepicker__week {
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+.react-datepicker__day {
+  color: var(--bs-body-color) !important;
+  border-radius: 0.25rem !important;
+  transition: all 0.2s ease !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  line-height: 2rem !important;
+  text-align: center !important;
+  margin: 0.1rem !important;
+  cursor: pointer !important;
+  font-size: 0.875rem !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: var(--bs-primary) !important;
+  color: white !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: var(--bs-primary) !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.react-datepicker__day--today {
+  background-color: var(--bs-warning) !important;
+  color: var(--bs-dark) !important;
+  font-weight: 600 !important;
+}
+
+.react-datepicker__day--disabled {
+  color: var(--bs-secondary) !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  background-color: transparent !important;
+}
+
+.react-datepicker__day--outside-month {
+  color: var(--bs-secondary) !important;
+  opacity: 0.5 !important;
+}
+
+.react-datepicker__today-button {
+  background-color: var(--bs-primary) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 0.25rem !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  margin: 0.5rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  width: calc(100% - 1rem) !important;
+  font-size: 0.875rem !important;
+}
+
+.react-datepicker__today-button:hover {
+  background-color: var(--bs-primary) !important;
+  opacity: 0.9 !important;
+  transform: translateY(-1px) !important;
+}
+
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  background-color: var(--bs-body-bg) !important;
+  border: 1px solid var(--bs-border-color) !important;
+  color: var(--bs-body-color) !important;
+  border-radius: 0.25rem !important;
+}
+
+.react-datepicker__month-option,
+.react-datepicker__year-option {
+  color: var(--bs-body-color) !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+.react-datepicker__month-option:hover,
+.react-datepicker__year-option:hover {
+  background-color: var(--bs-primary) !important;
+  color: white !important;
+}
+
+.react-datepicker__month-dropdown-container,
+.react-datepicker__year-dropdown-container {
+  text-align: center !important;
+}
+
+.react-datepicker__month-read-view,
+.react-datepicker__year-read-view {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 0.25rem !important;
+  padding: 0.25rem 0.5rem !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  cursor: pointer !important;
+}
+
+.react-datepicker__month-read-view:hover,
+.react-datepicker__year-read-view:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Dark theme support for react-datepicker */
+[data-bs-theme="dark"] .react-datepicker {
+  background-color: var(--bs-dark) !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  color: var(--bs-light) !important;
+}
+
+[data-bs-theme="dark"] .react-datepicker__header {
+  background-color: var(--bs-primary) !important;
+  border-bottom-color: var(--bs-border-color-translucent) !important;
+}
+
+[data-bs-theme="dark"] .react-datepicker__day {
+  color: var(--bs-light) !important;
+}
+
+[data-bs-theme="dark"] .react-datepicker__day--outside-month {
+  color: var(--bs-secondary) !important;
+}
+
+[data-bs-theme="dark"] .react-datepicker__month-dropdown,
+[data-bs-theme="dark"] .react-datepicker__year-dropdown {
+  background-color: var(--bs-dark) !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  color: var(--bs-light) !important;
+}
+
+[data-bs-theme="dark"] .react-datepicker__month-option,
+[data-bs-theme="dark"] .react-datepicker__year-option {
+  color: var(--bs-light) !important;
+}
+
+/* Date picker input integration with Bootstrap */
+.date-picker-component .input-group .form-control {
+  cursor: pointer;
+  background-color: var(--bs-body-bg) !important;
+  border-color: var(--bs-border-color) !important;
+}
+
+.date-picker-component .input-group .form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+  background-color: var(--bs-body-bg) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+.date-picker-component .input-group .btn {
+  border-color: var(--bs-border-color) !important;
+}
+
+.date-picker-component .input-group .btn:hover {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  color: white !important;
+}
+
+/* Recurring Transaction Manager Improvements */
+.recurring-transaction-manager .btn {
+  border-radius: 0.375rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.recurring-transaction-manager .btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.recurring-transaction-manager .btn-primary {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+.recurring-transaction-manager .btn-success {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+}
+
+.recurring-transaction-manager .card {
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.recurring-transaction-manager .card-header {
+  background-color: var(--bs-light) !important;
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+}
+
+[data-bs-theme="dark"] .recurring-transaction-manager .card-header {
+  background-color: var(--bs-dark) !important;
+  border-bottom-color: var(--bs-border-color-translucent) !important;
+}
+
+/* Table improvements */
+.recurring-transaction-manager .table {
+  border-radius: 0.5rem !important;
+  overflow: hidden !important;
+}
+
+.recurring-transaction-manager .table th {
+  background-color: var(--bs-light) !important;
+  border-bottom: 2px solid var(--bs-border-color) !important;
+  font-weight: 600 !important;
+}
+
+[data-bs-theme="dark"] .recurring-transaction-manager .table th {
+  background-color: var(--bs-dark) !important;
+  border-bottom-color: var(--bs-border-color-translucent) !important;
+}
+
+/* Enhanced button styles for better visibility in both themes */
+.btn-primary {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  color: white !important;
+}
+
+/* Transaction Manager Form Improvements - Simple checkbox */
+.transaction-manager .form-check-label {
+  cursor: pointer !important;
+}
+
+.transaction-manager .badge {
+  font-size: 0.7rem !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+[data-bs-theme="dark"] .transaction-manager .form-check:hover {
+  background-color: var(--bs-primary-bg-subtle) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+/* Form layout improvements */
+.transaction-manager .form-control,
+.transaction-manager .form-select {
+  border-radius: 0.375rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.transaction-manager .form-control:focus,
+.transaction-manager .form-select:focus {
+  border-color: var(--bs-primary) !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.transaction-manager .btn {
+  border-radius: 0.375rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.transaction-manager .btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+/* Dark theme calendar styles */
+[data-bs-theme="dark"] .calendar-dropdown {
+  background: var(--bs-dark) !important;
+  border: 1px solid var(--bs-border-color-translucent) !important;
+  color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .calendar-dropdown .btn-outline-light {
+  background-color: transparent !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .calendar-dropdown .btn-outline-light:hover:not(:disabled) {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  color: white !important;
+}
+
+/* Calendar layout improvements */
+.calendar-grid .col {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-grid .btn-sm {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Compact Transaction Manager Styles */
+.transaction-manager .card-sm {
+  font-size: 0.875rem;
+}
+
+.transaction-manager .badge-sm {
+  font-size: 0.7rem;
+  padding: 0.2em 0.4em;
+}
+
+.transaction-manager .table-sm th,
+.transaction-manager .table-sm td {
+  padding: 0.4rem;
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+.transaction-manager .btn-group-sm > .btn {
+  padding: 0.125rem 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.transaction-manager .form-control-sm,
+.transaction-manager .form-select-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Toggle Switch - Common Styles */
+.recurring-toggle,
+.override-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.toggle-checkbox {
+  height: 0;
+  width: 0;
+  opacity: 0;
+  position: absolute;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+.toggle-label::before {
+  content: '';
+  width: 3rem;
+  height: 1.5rem;
+  background-color: #e9ecef;
+  border-radius: 1.5rem;
+  margin-right: 0.75rem;
+  transition: background-color 0.3s;
+  position: relative;
+  display: inline-block;
+  box-shadow: inset 0 0.1rem 0.2rem rgba(0,0,0,0.1);
+  border: 1px solid #ced4da;
+}
+
+.toggle-label::after {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 0.1rem 0.3rem rgba(0,0,0,0.3);
+  transition: left 0.3s, background-color 0.3s;
+}
+
+.toggle-checkbox:checked + .toggle-label::before {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+  left: 1.75rem;
+  background-color: white;
+}
+
+.toggle-checkbox:focus + .toggle-label::before {
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+.toggle-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #495057;
+}
+
+.toggle-checkbox:disabled + .toggle-label {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Override Monthly Net Styles */
+.override-container {
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.override-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.override-switch .switch-checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.override-switch .switch-label {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  transition: .4s;
+  border-radius: 34px;
+  margin: 0;
+}
+
+.override-switch .switch-label:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.override-switch .switch-checkbox:checked + .switch-label {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.override-switch .switch-checkbox:checked + .switch-label:before {
+  transform: translateX(29px);
+}
+
+.custom-amount-container {
+  background-color: #f8f9fa;
+  transition: opacity 0.3s ease;
+}
+
+.override-container .input-group .form-control {
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.25rem;
+  height: calc(2.5rem + 2px);
+}
+
+.override-container .input-group-text {
+  background-color: #28a745;
+  color: white;
+  font-weight: 500;
+}
+
+.status-message {
+  font-size: 0.85rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+}
+
+.status-message.active {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #6c757d;
+  color: white;
+  margin-right: 8px;
+  font-size: 12px;
+}
+
+.status-message.active .status-icon {
+  background-color: #28a745;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.transaction-manager .text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-manager .card-body.py-2 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.transaction-manager .card-header.py-2 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.transaction-manager .row.g-2 {
+  --bs-gutter-x: 0.5rem;
+  --bs-gutter-y: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .transaction-manager .table-responsive {
+    font-size: 0.8rem;
+  }
+  
+  .transaction-manager .btn-group-sm > .btn {
+    padding: 0.1rem 0.2rem;
+    font-size: 0.7rem;
   }
 }
