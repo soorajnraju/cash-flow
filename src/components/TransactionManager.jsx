@@ -390,14 +390,14 @@ const TransactionManager = ({
       {/* Transactions Table */}
       <div className="table-responsive">
         <table className="table table-striped table-sm">
-          <thead>
+          <thead style={{ background: '#2563eb' }}>
             <tr>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Category</th>
-              <th>Amount</th>
-              <th>Description</th>
-              <th width="100">Actions</th>
+              <th className="text-center align-middle text-white">Date</th>
+              <th className="text-center align-middle text-white">Type</th>
+              <th className="text-center align-middle text-white">Category</th>
+              <th className="text-center align-middle text-white">Amount</th>
+              <th className="text-center align-middle text-white">Description</th>
+              <th className="text-center align-middle text-white" width="100">Actions</th>
             </tr>
           </thead>
           <tbody>

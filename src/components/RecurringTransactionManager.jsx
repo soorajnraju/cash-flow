@@ -264,16 +264,16 @@ const RecurringTransactionManager = ({
 
       {/* Recurring Transactions Table */}
       <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
+        <table className="table table-striped table-sm">
+          <thead style={{ background: '#2563eb' }}>
             <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Category</th>
-              <th>Amount</th>
-              <th>Frequency</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th className="text-center align-middle text-white">Name</th>
+              <th className="text-center align-middle text-white">Type</th>
+              <th className="text-center align-middle text-white">Category</th>
+              <th className="text-center align-middle text-white">Amount</th>
+              <th className="text-center align-middle text-white">Frequency</th>
+              <th className="text-center align-middle text-white">Status</th>
+              <th className="text-center align-middle text-white" width="100">Actions</th>
             </tr>
           </thead>
           <tbody>
