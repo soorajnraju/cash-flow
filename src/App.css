@@ -900,9 +900,12 @@ main {
 }
 
 .recurring-transaction-manager .table th {
-  background-color: var(--bs-light) !important;
+  background-color: var(--primary-color) !important;
+  color: white !important;
   border-bottom: 2px solid var(--bs-border-color) !important;
-  font-weight: 600 !important;
+  font-weight: bold;
+  font-size: 0.875rem;
+
 }
 
 [data-bs-theme="dark"] .recurring-transaction-manager .table th {
